@@ -8,17 +8,11 @@ require 'json'
 Dotenv.load
 
 # Find your API key at https://admin.typeform.com/account
-typeform_api_key = ENV["TYPEFORM_API_KEY"]
 
 # Find your Form ID at https://yoursubdomain.typeform.com/to/YOUR_FORM_ID
-typeform_form_id = ENV["TYPEFORM_FORM_ID"]
 
 # Find these on your form. Right click -> Inspect -> look at the `id` of the `<li>` element.
-typeform_email_field = ENV["TYPEFORM_EMAIL_FIELD"]
-typeform_firstname_field = ENV["TYPEFORM_FIRSTNAME_FIELD"]
 #@ Adding custom fields for our app
-typeform_lastname_field = ENV["TYPEFORM_LASTNAME_FIELD"]
-typeform_degree_field = ENV["TYPEFORM_DEGREE_FIELD"]
 #@ Commenting out, will use logic to auto enroll in channels rather than user choice
 #typeform_channels_field = ENV["TYPEFORM_CHANNELS_FIELD"]
 #typeform_channels_names = ENV["TYPEFORM_CHANNELS_NAMES"].split(',')
@@ -34,10 +28,8 @@ else
 end
 
 # SLACK_DOMAIN.slack.com
-slack_domain = ENV["SLACK_DOMAIN"]
 
 # Generate a token at https://api.slack.com/web
-slack_auth_token = ENV["SLACK_API_KEY"]
 
 # This is a little advanced:
 # To get the Channel IDs, you need to ask the Slack API. Paste this into Terminal:
@@ -90,6 +82,7 @@ typeform_data['responses'].each do |response|
     user['channels'] = "C14NG07QQ,C14NHNVV5,C14NXM1AN"
   when "B.S. IT - Network Administration"
     user['channels'] = "C14NG07QQ,C14NHNVV5,C14NJQT24"
+  end
 
   if !previously_invited_emails.include? user['email']
     users_to_invite.push(user)
@@ -107,8 +100,8 @@ users_to_invite.each do |user|
     'email' => user['email'],
     'first_name' => user['firstname'],
     'last_name' => user['lastname'],
-    'title' => user['degree']
-    'channels' => user['channels'].join(","),
+    'title' => user['degree'],
+    'channels' => user['channels'],
     'token' => slack_auth_token,
     'set_active' => "true",
     '_attempts' => "1"
