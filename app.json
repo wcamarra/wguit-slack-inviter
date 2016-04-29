@@ -1,0 +1,62 @@
+{
+  "name": "Typeform Slack Inviter",
+  "description": "Use Typeform to automatically invite people to your Slack community.",
+  "repository": "https://github.com/wr/typeform-slack-inviter",
+  "logo": "http://wellsosaur.us/ez1d/logo.png",
+  "keywords": ["slack", "typeform", "ruby"],
+  "env": {
+    "TYPEFORM_API_KEY": {
+      "description": "Find your API key at https://admin.typeform.com/account",
+      "required": true
+    },
+    "TYPEFORM_FORM_ID": {
+      "description": "Find your Form ID at https://yoursubdomain.typeform.com/to/YOUR_FORM_ID",
+      "required": true
+    },
+    "TYPEFORM_EMAIL_FIELD": {
+      "description": "Find this on your form. Right click -> Inspect -> look at the `id` of the `<li>` element.",
+      "value": "email_",
+      "required": true
+    },
+    "TYPEFORM_FIRSTNAME_FIELD": {
+      "description": "Find this on your form. Right click -> Inspect -> look at the `id` of the `<li>` element.",
+      "value": "textfield_",
+      "required": true
+    },
+    "TYPEFORM_LASTNAME_FIELD": {
+      "description": "Find this on your form. Right click -> Inspect -> look at the `id` of the `<li>` element.",
+      "value": "textfield_",
+      "required": true
+    },
+    "TYPEFORM_DEGREE_FIELD": {
+      "description": "Find this on your form. Right click -> Inspect -> look at the `id` of the `<li>` element.",
+      "value": "dropdown_",
+      "required": true
+    },
+    "SLACK_DOMAIN": {
+      "description": "SLACK_DOMAIN.slack.com",
+      "required": true
+    },
+    "SLACK_API_KEY": {
+      "description": "Generate a token at https://api.slack.com/web",
+      "required": true
+    },
+    "TYPEFORM_CHANNELS_FIELD": {
+      "description": "(optional) Find this on your form. Right click -> Inspect -> look at the `id` of the `<li>` element.",
+      "value": "list_",
+      "required": false
+    },
+    "TYPEFORM_CHANNELS_NAMES": {
+      "description": "(optional) The human-readable names of the answers to the above field's questions.",
+      "required": false
+    },
+    "SLACK_CHANNELS": {
+      "description": "(optional) This is a little complicated. Here's a video: (video)",
+      "required": false
+    }
+  },
+  "addons": [
+    "heroku-redis:hobby-dev",
+    "scheduler:standard"
+  ]
+}
