@@ -1,5 +1,4 @@
 #!/home/ec2-user/.rbenv/shims/ruby
-#!/usr/bin/env ruby
 
 require 'rubygems'
 require 'redis'
