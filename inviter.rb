@@ -1,16 +1,20 @@
+#!/home/ec2-user/.rbenv/shims/ruby
 #!/usr/bin/env ruby
 
 require 'rubygems'
-require 'dotenv'
 require 'redis'
 require 'open-uri'
 require 'json'
-Dotenv.load
 
 # Find your API key at https://admin.typeform.com/account
-
+typeform_api_key = ""
+typeform_form_id = ""
 # Find your Form ID at https://yoursubdomain.typeform.com/to/YOUR_FORM_ID
-
+typeform_email_field = "email_20306303"
+typeform_firstname_field = "textfield_20306301"
+#@ Adding custom fields for our app
+typeform_lastname_field = "textfield_20306302"
+typeform_degree_field = "dropdown_21412378"
 # Find these on your form. Right click -> Inspect -> look at the `id` of the `<li>` element.
 #@ Adding custom fields for our app
 #@ Commenting out, will use logic to auto enroll in channels rather than user choice
@@ -28,9 +32,9 @@ else
 end
 
 # SLACK_DOMAIN.slack.com
-
+slack_domain = "wguit"
 # Generate a token at https://api.slack.com/web
-
+slack_auth_token = ""
 # This is a little advanced:
 # To get the Channel IDs, you need to ask the Slack API. Paste this into Terminal:
 #
@@ -45,12 +49,23 @@ end
 #slack_channels = ENV["SLACK_CHANNELS"].split(',')
 
 ###############################################################################
+#@ Added hardcoded channels for now
+#@ TODO: Use logic to pull group info from slack directly
+all_groups_channels = "C14D1H19P,C14CFRRTL,C14UTM5U5,C0Z77BT4M,C10405258,C0Z77BT8V,C14A5BH0Q,C15093NGK"
+bsit_channels = "C14CRHWBA,C14UM3XCZ,C0ZLX9F0B,C14CTP2G0,C14CVGZ71,C151NCWD6,#{all_groups_channels}"
+netadmin_channels = "C14CUB3J9,C14UM3XCZ,C0ZLX9F0B,C14CTP2G0,C14CWTFQD,C14CVGZ71,C151NCWD6,#{all_groups_channels}"
+netsec_channels = "C14CHT5NG,C14UM3XCZ,C0ZLX9F0B,C14BDHK43,C14CTP2G0,C14CVGZ71,C151NCWD6,C15093NGK,#{all_groups_channels}"
+swdev_channels = "C14CZQ3H7,C14UM3XCZ,C0ZLX9F0B,C14CTP2G0,C14CVGZ71,C151NCWD6,#{all_groups_channels}"
+health_channels = "C151NCWD6,#{all_groups_channels}"
+msprog_channels = "C14CULDV5,#{all_groups_channels}"
 
+#@TODO: Add logic to ensure the offset actually makes sense
 offset = previously_invited_emails.count;
 
 typeform_api_url = "https://api.typeform.com/v0/form/#{typeform_form_id}?key=#{typeform_api_key}&completed=true&offset=#{offset}"
-
 typeform_data = JSON.parse(open(typeform_api_url).read)
+
+puts "#{Time.now.strftime("%B %d, %Y: %r")} - Using URL: #{typeform_api_url}"
 
 users_to_invite = Array.new
 #slack_channels_array = Hash[typeform_channels_names.zip slack_channels]
@@ -62,7 +77,6 @@ typeform_data['responses'].each do |response|
   user['firstname'] = response['answers'][typeform_firstname_field]
   user['lastname'] = response['answers'][typeform_lastname_field]
   user['degree'] = response['answers'][typeform_degree_field]
-
 #@ TODO: Change this to do logic with the degree and set the channels
 #@ Commenting out old code, which allows users to select what channels they wnat to join
 #@ We can still allow user choice for the default, but am starting with assigning based on degree
@@ -79,9 +93,19 @@ typeform_data['responses'].each do |response|
   #@ We can script in more advanced logic to scrape the JSON return for the channels and put them in
   case user['degree']
   when "B.S. IT"
-    user['channels'] = "C14NG07QQ,C14NHNVV5,C14NXM1AN"
+    user['channels'] = bsit_channels
   when "B.S. IT - Network Administration"
-    user['channels'] = "C14NG07QQ,C14NHNVV5,C14NJQT24"
+    user['channels'] = netadmin_channels
+  when "B.S. IT – Security"
+    user['channels'] = netsec_channels
+  when "B.S. Software Development"
+    user['channels'] = swdev_channels
+  when "B.S. Health Informatics"
+    user['channels'] = health_channels
+  when /^M/
+    user['channels'] = msprog_channels
+  when "Undecided"
+    user['channels'] = all_groups_channels
   end
 
   if !previously_invited_emails.include? user['email']
@@ -118,4 +142,5 @@ users_to_invite.each do |user|
   end
 end
 
+puts "#{Time.now.strftime("%B %d, %Y: %r")} Script done!"
 redis.set("previously_invited_emails", previously_invited_emails.to_json)
