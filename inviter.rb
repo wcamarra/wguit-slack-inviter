@@ -49,7 +49,6 @@ puts "#{Time.now.strftime("%B %d, %Y: %r")} - Using Time: #{sinceTime.to_i}"
 typeform_api_url = "https://api.typeform.com/v0/form/#{typeform_form_id}?key=#{typeform_api_key}&completed=true&since=#{sinceTime.to_i}"
 
 # Debug line, testing my entry so I dont have to keep filling out form
-#typeform_api_url = "https://api.typeform.com/v0/form/wuOXg4?key=e8895c4a3d9e9dfb151ca5e6fb95c46573c1f966&completed=true&offset=953"
 # Parse the JSON return
 typeform_data = JSON.parse(open(typeform_api_url).read)
 
